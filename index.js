@@ -4,9 +4,13 @@ const itemList = document.getElementById('item-list');
 const filterInput = document.getElementById('filter');
 const clearBtn = document.getElementById('clear');
 let UpdateState = false;
+localStorage.clear();
+const localStorageItems = [];
 
 function addItem(e) {
     e.preventDefault();
+    addBtn.innerHTML = '<i class ="fa-solid fa-plus">Add item</i>';
+    addBtn.style.backgroundColor = "#333";
 
 
     listItems = itemList.querySelectorAll("li");
@@ -48,13 +52,25 @@ function addItem(e) {
         return icon;
     }
 
-}
+    localStorageItems.push(li.firstChild.textContent);
+
+    localStorage.setItem('items', JSON.stringify(localStorageItems));
     
+}
+
 
 function deleteItem(e) {
+    localStorage.clear();
+    let localStorageUpdate = [];
     if(e.target){
         if(e.target.className === 'fa-solid fa-xmark') {
-            e.target.parentElement.parentElement.remove();
+            const deleteTargetItem = e.target.parentElement.parentElement
+            deleteTargetItem.remove();
+            localStorageUpdate = localStorageItems.filter((it) =>
+                it !== deleteTargetItem.firstChild.textContent
+            );
+            console.log(localStorageUpdate);
+            localStorage.setItem("items", JSON.stringify(localStorageUpdate));
         }
         else{
             setStateToChange(e.target)
@@ -105,8 +121,7 @@ function filterItem(e) {
 
 function setStateToChange(item) {
     UpdateState = true;
-    console.log(item);
-    console.log(itemList);
+
 
     item.style.color = "#ccc";  // or item.classList.add("update") which we have defined in CSS file
 
